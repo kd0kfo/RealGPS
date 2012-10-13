@@ -1,5 +1,6 @@
 package com.davecoss.android.RealGPS;
 
+import com.davecoss.android.lib.Notifier;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.location.*;
 import android.content.Context;
 
@@ -35,16 +35,6 @@ public class RealGPSMain extends Activity {
         mlocListener = new DRCLocationListener();
         locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
         
-//        final boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        if(!gpsEnabled)
-//        {
-//        	enableLocationSettings();
-//        }
-//        else
-//        {
-//	        LocationProvider provider =
-//	                locationManager.getProvider(LocationManager.GPS_PROVIDER);
-//        }
         setContentView(R.layout.activity_main);
     }
 
@@ -53,7 +43,9 @@ public class RealGPSMain extends Activity {
     	boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
     	String state = Environment.getExternalStorageState();
-
+    	Notifier notifier = new Notifier(getApplicationContext());
+        
+    	
     	if (Environment.MEDIA_MOUNTED.equals(state)) {
     	    // We can read and write the media
     	    mExternalStorageAvailable = mExternalStorageWriteable = true;
@@ -74,7 +66,7 @@ public class RealGPSMain extends Activity {
     		{
     			if(!dir.mkdirs())
     			{
-    				write_message("Could not make directory.");
+    				notifier.write_message(findViewById(R.id.location_text),"Could not make directory.");
     				return;
     			}
     		}
@@ -83,27 +75,18 @@ public class RealGPSMain extends Activity {
 				OutputStream os = new FileOutputStream(file,true);
     	        os.write((lat + ", " + lon+"\n").getBytes());
     	        os.close();
-    	        toast_message("Coordinates saved.");
+    	        notifier.toast_message("Coordinates saved.");
 			
     	    } catch (IOException e) {
-    	        write_message("ExternalStorage: Error writing " + file.getName() + "\n" + e.getMessage());
+    	        notifier.write_message(findViewById(R.id.location_text), "ExternalStorage: Error writing " + file.getName() + "\n" + e.getMessage());
     	    }
     	}
     	else
     	{
-    		write_message("Cannot write file.");
+    		notifier.write_message(findViewById(R.id.location_text), "Cannot write file.");
     	}
     }
-    
-    public void toast_message(String msg)
-    {
-    	Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, msg, duration);
-        toast.show();
-    }
-    
+       
     protected void onStop() {
         super.onStop();
         locationManager.removeUpdates(mlocListener);
@@ -120,13 +103,7 @@ public class RealGPSMain extends Activity {
     	location_text.setText("Please enable GPS");
         //Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         //startActivity(settingsIntent);
-    }
-    
-    private void write_message(String msg)
-    {
-    	TextView text = (TextView) findViewById(R.id.location_text);
-        text.setText(msg);
-    }
+    } 
     
     public class DRCLocationListener implements LocationListener
     {
@@ -155,8 +132,8 @@ public class RealGPSMain extends Activity {
 
     public void onProviderEnabled(String provider)
     {
-    	TextView text = (TextView) findViewById(R.id.location_text);
-        text.setText("GPS Enabled");
+    	Notifier notifier = new Notifier(getApplicationContext());
+    	notifier.write_message(findViewById(R.id.location_text),"GPS Enabled");
     }
 
     @Override
