@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.location.*;
 import android.content.Context;
 
@@ -82,6 +83,7 @@ public class RealGPSMain extends Activity {
 				OutputStream os = new FileOutputStream(file,true);
     	        os.write((lat + ", " + lon+"\n").getBytes());
     	        os.close();
+    	        toast_message("Coordinates saved.");
 			
     	    } catch (IOException e) {
     	        write_message("ExternalStorage: Error writing " + file.getName() + "\n" + e.getMessage());
@@ -91,6 +93,15 @@ public class RealGPSMain extends Activity {
     	{
     		write_message("Cannot write file.");
     	}
+    }
+    
+    public void toast_message(String msg)
+    {
+    	Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, msg, duration);
+        toast.show();
     }
     
     protected void onStop() {
