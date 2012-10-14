@@ -1,1 +1,4 @@
+1.2: Changed display to show more detailed GPS information.
+	Change log file to include more data.
+	Added memo tag to data file.
 1.1: Added Toast notification when log is written.

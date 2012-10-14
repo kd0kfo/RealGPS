@@ -5,30 +5,35 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.util.Date;
 
 import com.davecoss.android.RealGPS.R;
 
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.location.*;
 import android.content.Context;
+import android.content.pm.PackageManager;
 
 public class RealGPSMain extends Activity {
+	private static final String TAG = "RealGPSMain";
 	private LocationManager locationManager;
 	LocationListener mlocListener;
-	double lat;
-	double lon;
+	Notifier notifier;
+	String last_loc;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        lat = 1;
-        lon = 2;
+        last_loc = "";
 
         locationManager =
                 (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -36,15 +41,34 @@ public class RealGPSMain extends Activity {
         locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
         
         setContentView(R.layout.activity_main);
+        
+        notifier = new Notifier(getApplicationContext());
+        
+        try
+        {
+        	TextView version = (TextView) findViewById(R.id.txt_version);
+            String app_ver = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+            version.setText(app_ver);
+        }
+        catch (PackageManager.NameNotFoundException e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+
+        
     }
 
     public void save_location(View view)
     {
     	boolean mExternalStorageAvailable = false;
     	boolean mExternalStorageWriteable = false;
+    	
+    	if(last_loc == "")
+    	{
+    		notifier.toast_message(getString(R.string.no_position_info));
+    	}
+    	
     	String state = Environment.getExternalStorageState();
-    	Notifier notifier = new Notifier(getApplicationContext());
-        
     	
     	if (Environment.MEDIA_MOUNTED.equals(state)) {
     	    // We can read and write the media
@@ -66,24 +90,28 @@ public class RealGPSMain extends Activity {
     		{
     			if(!dir.mkdirs())
     			{
-    				notifier.write_message(findViewById(R.id.location_text),"Could not make directory.");
+    				notifier.toast_message("Could not make directory.");
     				return;
     			}
     		}
     		File file = new File(dir, "gps_log.txt");
     		try {
 				OutputStream os = new FileOutputStream(file,true);
-    	        os.write((lat + ", " + lon+"\n").getBytes());
+				EditText edit_tag = (EditText) findViewById(R.id.edit_tag);
+				String tag = edit_tag.getText().toString().trim();
+				os.write((tag+":").getBytes());
+				os.write(last_loc.getBytes());
+    	        os.write('\n');
     	        os.close();
     	        notifier.toast_message("Coordinates saved.");
 			
     	    } catch (IOException e) {
-    	        notifier.write_message(findViewById(R.id.location_text), "ExternalStorage: Error writing " + file.getName() + "\n" + e.getMessage());
+    	        notifier.toast_message("ExternalStorage: Error writing " + file.getName() + "\n" + e.getMessage());
     	    }
     	}
     	else
     	{
-    		notifier.write_message(findViewById(R.id.location_text), "Cannot write file.");
+    		notifier.toast_message("Cannot write file.");
     	}
     }
        
@@ -99,27 +127,45 @@ public class RealGPSMain extends Activity {
     }
     
     private void enableLocationSettings() {
-    	TextView location_text = (TextView) findViewById(R.id.location_text);
-    	location_text.setText("Please enable GPS");
+    	notifier.toast_message("Please enable GPS");
         //Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         //startActivity(settingsIntent);
     } 
     
     public class DRCLocationListener implements LocationListener
     {
+    	private void updateTextView(TextView tv, double val)
+    	{
+    		DecimalFormat df = new DecimalFormat("#.######");
+    		tv.setText(df.format(val));
+    	}
+    	
+    	private void date2textview(TextView view, Date date)
+    	{
+    		view.setText(DateFormat.getInstance().format(date));
+    		
+    	}
+    	
     @Override
     public void onLocationChanged(Location loc)
     {
-
-    lat = loc.getLatitude();
-
-    lon = loc.getLongitude();
-
-    String bean = "My current location is: Lat = " + lat + "Lon = " + lon;
-
-    TextView text = (TextView) findViewById(R.id.location_text);
-    text.setText(bean);
-
+    	TextView lat = (TextView) findViewById(R.id.txt_latitude);
+        TextView lon = (TextView) findViewById(R.id.txt_longitude);
+        TextView bearing = (TextView) findViewById(R.id.txt_bearing);
+        TextView speed = (TextView) findViewById(R.id.txt_speed);
+        TextView altitude = (TextView) findViewById(R.id.txt_altitude);
+        TextView time = (TextView) findViewById(R.id.txt_time);
+        Date date = new Date(loc.getTime());
+        
+        updateTextView(lat,loc.getLatitude());
+        updateTextView(lon,loc.getLongitude());
+        updateTextView(bearing,loc.getBearing());
+        updateTextView(speed,loc.getSpeed());
+        updateTextView(altitude,loc.getAltitude());
+        date2textview(time,date);
+        
+        last_loc = loc.getLatitude() + "," + loc.getLongitude() + "," + loc.getAltitude() + "," + loc.getBearing() + "," + loc.getSpeed() + "," + loc.getTime();
+        
     }
 
     @Override
@@ -132,8 +178,7 @@ public class RealGPSMain extends Activity {
 
     public void onProviderEnabled(String provider)
     {
-    	Notifier notifier = new Notifier(getApplicationContext());
-    	notifier.write_message(findViewById(R.id.location_text),"GPS Enabled");
+    	notifier.toast_message("GPS Enabled");
     }
 
     @Override
