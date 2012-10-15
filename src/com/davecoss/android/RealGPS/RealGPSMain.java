@@ -17,23 +17,32 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.location.*;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 
-public class RealGPSMain extends Activity {
+public class RealGPSMain extends Activity implements OnItemSelectedListener {
 	private static final String TAG = "RealGPSMain";
+	
+	public enum Units {UNITS_METRIC, UNITS_IMPERIAL};
+	
 	private LocationManager locationManager;
 	LocationListener mlocListener;
 	Notifier notifier;
 	String last_loc;
+	Units units;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         last_loc = "";
+        units = Units.UNITS_METRIC;
 
         locationManager =
                 (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -55,6 +64,8 @@ public class RealGPSMain extends Activity {
             Log.e(TAG, e.getMessage());
         }
 
+        Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+        spinner.setOnItemSelectedListener(this);
         
     }
 
@@ -156,12 +167,27 @@ public class RealGPSMain extends Activity {
         TextView altitude = (TextView) findViewById(R.id.txt_altitude);
         TextView time = (TextView) findViewById(R.id.txt_time);
         Date date = new Date(loc.getTime());
-        
+ 
         updateTextView(lat,loc.getLatitude());
         updateTextView(lon,loc.getLongitude());
         updateTextView(bearing,loc.getBearing());
-        updateTextView(speed,loc.getSpeed());
-        updateTextView(altitude,loc.getAltitude());
+        double val = loc.getSpeed();
+        if(units == Units.UNITS_IMPERIAL)
+        {
+            val *= 2.23694;
+        }
+        else
+        {
+        	val *= 3.6;
+        }
+        updateTextView(speed,val);
+        
+        val = loc.getAltitude();
+        if(units == Units.UNITS_IMPERIAL)
+        {
+        	val *= 3.28084;
+        }
+        updateTextView(altitude,val);
         date2textview(time,date);
         
         last_loc = loc.getLatitude() + "," + loc.getLongitude() + "," + loc.getAltitude() + "," + loc.getBearing() + "," + loc.getSpeed() + "," + loc.getTime();
@@ -189,6 +215,43 @@ public class RealGPSMain extends Activity {
     }
 
     }/* End of Class MyLocationListener */
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		Resources res = getResources();
+		String[] unit_types = res.getStringArray(R.array.units_array);
+		if(unit_types[arg2].equals("Metric"))
+			units = Units.UNITS_METRIC;
+		if(unit_types[arg2].equals("Imperial"))
+			units = Units.UNITS_IMPERIAL;
+		
+		TextView unit_label;
+		switch(units)
+		{
+		case UNITS_IMPERIAL:
+			unit_label = (TextView) findViewById(R.id.textView8);
+			unit_label.setText("mph");
+			unit_label = (TextView) findViewById(R.id.textView10);
+			unit_label.setText("ft");
+			break;
+		case UNITS_METRIC: default:
+			unit_label = (TextView) findViewById(R.id.textView8);
+			unit_label.setText("m/s");
+			unit_label = (TextView) findViewById(R.id.textView10);
+			unit_label.setText("m");
+			break;
+		}
+		
+		notifier.toast_message("Changed Units to " + unit_types[arg2]);
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
 

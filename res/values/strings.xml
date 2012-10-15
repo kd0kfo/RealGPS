@@ -19,5 +19,9 @@
     <string name="label_bearing_units">deg</string>
     <string name="label_alt_units">m</string>
     <string name="label_coord_units">deg</string>
-
+    <string name="label_units">Units</string>
+	<string-array name="units_array">
+	    <item>Metric</item>
+	    <item>Imperial</item>
+	</string-array>
 </resources>
