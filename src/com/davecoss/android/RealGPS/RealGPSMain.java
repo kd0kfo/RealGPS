@@ -238,7 +238,7 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
 			break;
 		case UNITS_METRIC: default:
 			unit_label = (TextView) findViewById(R.id.textView8);
-			unit_label.setText("m/s");
+			unit_label.setText("km/hr");
 			unit_label = (TextView) findViewById(R.id.textView10);
 			unit_label.setText("m");
 			break;

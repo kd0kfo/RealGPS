@@ -15,7 +15,7 @@
     <string name="no_position_info">No position information</string>
     <string name="label_tag">Tag</string>
     <string name="label_version">Version</string>
-    <string name="label_speed_units">m/s</string>
+    <string name="label_speed_units">km/hr</string>
     <string name="label_bearing_units">deg</string>
     <string name="label_alt_units">m</string>
     <string name="label_coord_units">deg</string>
