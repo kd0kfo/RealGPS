@@ -24,4 +24,5 @@
 	    <item>Metric</item>
 	    <item>Imperial</item>
 	</string-array>
+	    <string name="menu_version">Version</string>
 </resources>
