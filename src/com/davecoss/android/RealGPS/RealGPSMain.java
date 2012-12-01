@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -24,11 +25,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.location.*;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 
 public class RealGPSMain extends Activity implements OnItemSelectedListener {
 	private static final String TAG = "RealGPSMain";
+	private static final int SHOW_COMPASS = 1;
 	
 	public enum Units {UNITS_METRIC, UNITS_IMPERIAL};
 	
@@ -253,5 +256,18 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
 		
 	}
 
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.menu_compass:
+        	Intent compass_activity = new Intent(getBaseContext(), Compass.class);
+        	startActivityForResult(compass_activity,SHOW_COMPASS);
+        	return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+	
 }
 
