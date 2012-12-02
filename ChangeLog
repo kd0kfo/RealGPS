@@ -1,5 +1,6 @@
 1.4: Added Compass
 	 Added Tag for Units to Log
+	 Add SMS
 1.2: Changed display to show more detailed GPS information.
 	Change log file to include more data.
 	Added memo tag to data file.

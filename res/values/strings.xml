@@ -28,5 +28,13 @@
 
     <string name="menu_version">Version</string>
     <string name="title_activity_compass">Compass</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_smslocation">SMS Location</string>
+    <string name="label_sms_message">Send the following GPS Data:</string>
+    <string name="sms_message_hint">GPS data to be sent</string>
+    <string name="btn_select_contact">Select Contact</string>
+    <string name="btn_send_sms">Send</string>
+    <string name="menu_sms">SMS GPS</string>
+    <string name="label_sms_contact">SMS Recipient</string>
 
 </resources>

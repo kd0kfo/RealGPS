@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.davecoss.android.RealGPS"
     android:versionCode="4"
-    android:versionName="1.4a" >
+    android:versionName="1.4" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -9,6 +9,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -26,6 +28,15 @@
         <activity
             android:name=".Compass"
             android:label="@string/title_activity_compass" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SMSLocation"
+            android:label="@string/title_activity_smslocation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

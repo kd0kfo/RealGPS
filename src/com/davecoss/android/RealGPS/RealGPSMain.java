@@ -14,7 +14,6 @@ import com.davecoss.android.RealGPS.R;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,12 +25,15 @@ import android.widget.TextView;
 import android.location.*;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 
 public class RealGPSMain extends Activity implements OnItemSelectedListener {
 	private static final String TAG = "RealGPSMain";
+	public static final String SEND_SMS = "RealGPSMain.SEND_SMS";
+	private static final int SHOW_SEND_SMS = 0;
 	private static final int SHOW_COMPASS = 1;
+	
 	
 	public enum Units {UNITS_METRIC, UNITS_IMPERIAL};
 	
@@ -55,17 +57,6 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
         setContentView(R.layout.activity_main);
         
         notifier = new Notifier(getApplicationContext());
-        
-        try
-        {
-        	TextView version = (TextView) findViewById(R.id.txt_version);
-            String app_ver = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
-            version.setText(app_ver);
-        }
-        catch (PackageManager.NameNotFoundException e)
-        {
-            Log.e(TAG, e.getMessage());
-        }
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner1);
         spinner.setOnItemSelectedListener(this);
@@ -142,9 +133,21 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
     
     private void enableLocationSettings() {
     	notifier.toast_message("Please enable GPS");
-        //Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        //startActivity(settingsIntent);
     } 
+    
+    public String getUnitsString()
+    {
+    	switch(units)
+    	{
+    	case UNITS_IMPERIAL:
+    		return "imperial";
+    	case UNITS_METRIC:
+    		return "metric";
+    	default:
+    		break;
+    	}
+    	return "UNKNOWN";
+    }
     
     public class DRCLocationListener implements LocationListener
     {
@@ -193,7 +196,7 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
         updateTextView(altitude,val);
         date2textview(time,date);
         
-        last_loc = loc.getLatitude() + "," + loc.getLongitude() + "," + loc.getAltitude() + "," + loc.getBearing() + "," + loc.getSpeed() + "," + loc.getTime();
+        last_loc = loc.getLatitude() + "," + loc.getLongitude() + "," + loc.getAltitude() + "," + loc.getBearing() + "," + loc.getSpeed() + "," + loc.getTime()+","+getUnitsString();
         
     }
 
@@ -264,8 +267,30 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
         	Intent compass_activity = new Intent(getBaseContext(), Compass.class);
         	startActivityForResult(compass_activity,SHOW_COMPASS);
         	return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        case R.id.menu_sms:
+        	Intent sms_activity = new Intent(getBaseContext(), SMSLocation.class);
+        	EditText edit_tag = (EditText) findViewById(R.id.edit_tag);
+			String gps_data = edit_tag.getText().toString().trim();
+			if(gps_data.length() > 0)
+				gps_data += ":";
+			gps_data += last_loc;
+			sms_activity.putExtra(SEND_SMS, gps_data);
+        	startActivityForResult(sms_activity,SHOW_SEND_SMS);
+        	return true;
+        case R.id.menu_version:
+        	String app_ver;
+			try {
+				app_ver = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+				app_ver = "Version " + app_ver;
+	        } catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				app_ver = "Error getting version";
+			}
+			notifier.toast_message(app_ver);
+        	return true;
+        default:
+        	return super.onOptionsItemSelected(item);
         }
     }
 	

@@ -1,3 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_compass" android:orderInCategory="100" android:title="@string/menu_compass"></item>
+    <item android:id="@+id/menu_sms" android:orderInCategory="101" android:title="@string/menu_sms"></item>
+    <item android:id="@+id/menu_version" android:title="@string/label_version" android:orderInCategory="102"></item>
 </menu>

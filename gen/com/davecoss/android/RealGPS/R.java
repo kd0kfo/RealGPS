@@ -20,45 +20,53 @@ public final class R {
     public static final class id {
         public static final int LinearLayout1=0x7f080000;
         public static final int TextView01=0x7f08000f;
+        public static final int btn_contact=0x7f08001b;
         public static final int btn_save=0x7f080004;
+        public static final int btn_send_sms=0x7f08001a;
         public static final int edit_tag=0x7f080018;
-        public static final int menu_compass=0x7f08001c;
-        public static final int menu_settings=0x7f08001b;
+        public static final int menu_compass=0x7f08001e;
+        public static final int menu_settings=0x7f08001d;
+        public static final int menu_sms=0x7f08001f;
+        public static final int menu_version=0x7f080020;
         public static final int orientation=0x7f080001;
-        public static final int spinner1=0x7f080019;
+        public static final int spinner1=0x7f080016;
         public static final int tableRow1=0x7f080003;
         public static final int textView1=0x7f080005;
-        public static final int textView10=0x7f080014;
-        public static final int textView11=0x7f080015;
-        public static final int textView12=0x7f080016;
-        public static final int textView13=0x7f08001a;
+        public static final int textView10=0x7f080012;
+        public static final int textView11=0x7f080013;
+        public static final int textView12=0x7f080014;
+        public static final int textView13=0x7f080017;
         public static final int textView2=0x7f080002;
         public static final int textView3=0x7f080006;
         public static final int textView4=0x7f080007;
         public static final int textView5=0x7f080008;
-        public static final int textView6=0x7f080017;
-        public static final int textView7=0x7f080010;
-        public static final int textView8=0x7f080012;
-        public static final int textView9=0x7f080013;
+        public static final int textView6=0x7f080015;
+        public static final int textView8=0x7f080010;
+        public static final int textView9=0x7f080011;
         public static final int txt_altitude=0x7f08000d;
         public static final int txt_bearing=0x7f08000c;
+        public static final int txt_contact_name=0x7f08001c;
         public static final int txt_latitude=0x7f080009;
         public static final int txt_longitude=0x7f08000a;
+        public static final int txt_sms_message=0x7f080019;
         public static final int txt_speed=0x7f08000b;
         public static final int txt_time=0x7f08000e;
-        public static final int txt_version=0x7f080011;
     }
     public static final class layout {
         public static final int activity_compass=0x7f030000;
         public static final int activity_main=0x7f030001;
+        public static final int activity_smslocation=0x7f030002;
     }
     public static final class menu {
         public static final int activity_compass=0x7f070000;
         public static final int activity_main=0x7f070001;
+        public static final int activity_smslocation=0x7f070002;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int btn_save=0x7f040004;
+        public static final int btn_select_contact=0x7f04001a;
+        public static final int btn_send_sms=0x7f04001b;
         public static final int hello_world=0x7f040001;
         public static final int label_alt_units=0x7f040011;
         public static final int label_altitude=0x7f040009;
@@ -67,6 +75,8 @@ public final class R {
         public static final int label_coord_units=0x7f040012;
         public static final int label_lat=0x7f040005;
         public static final int label_lon=0x7f040006;
+        public static final int label_sms_contact=0x7f04001d;
+        public static final int label_sms_message=0x7f040018;
         public static final int label_speed=0x7f040007;
         public static final int label_speed_units=0x7f04000f;
         public static final int label_tag=0x7f04000d;
@@ -74,10 +84,14 @@ public final class R {
         public static final int label_units=0x7f040013;
         public static final int label_version=0x7f04000e;
         public static final int menu_compass=0x7f040002;
+        public static final int menu_settings=0x7f040016;
+        public static final int menu_sms=0x7f04001c;
         public static final int menu_version=0x7f040014;
         public static final int no_position_info=0x7f04000c;
+        public static final int sms_message_hint=0x7f040019;
         public static final int title_activity_compass=0x7f040015;
         public static final int title_activity_main=0x7f040003;
+        public static final int title_activity_smslocation=0x7f040017;
         public static final int unknown=0x7f04000a;
     }
     public static final class style {
