@@ -17,7 +17,7 @@ import android.widget.TextView;
 public class Compass extends Activity implements SensorEventListener {
 
 	private SensorManager sensor_manager;
-	private Sensor geomag_sensor,grav_sensor;
+	private Sensor orient_sensor;
 	private Notifier notifier;
 	
     @Override
@@ -27,15 +27,13 @@ public class Compass extends Activity implements SensorEventListener {
         notifier = new Notifier(getApplicationContext());
         
         sensor_manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        geomag_sensor = sensor_manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        grav_sensor = sensor_manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        orient_sensor = sensor_manager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     }
 
     @Override
     protected void onResume() {
       super.onResume();
-      sensor_manager.registerListener(this, grav_sensor, SensorManager.SENSOR_DELAY_NORMAL);
-      sensor_manager.registerListener(this, geomag_sensor, SensorManager.SENSOR_DELAY_NORMAL);
+      sensor_manager.registerListener(this, orient_sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -62,36 +60,31 @@ public class Compass extends Activity implements SensorEventListener {
 		tv.setText(df.format(val));
 	}
 
-	float[] geomagnetic;
-	float[] gravity;
+	float[] orientation = new float[3];
+	int counter = 0;
 	
 	@Override
 	public void onSensorChanged(SensorEvent arg0) {
 		// TODO Auto-generated method stub
-		try{
-		if(arg0.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-			gravity = arg0.values;
-		if(arg0.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-			geomagnetic = arg0.values;
-		if(gravity == null || geomagnetic == null)
-			return;
-		float Rot[] = new float[9];
-		float I[] = new float[9];
-		boolean success = SensorManager.getRotationMatrix(Rot, I, gravity, geomagnetic);
-		if (success) {
-			float orientation[] = new float[3];
-			double bearing;
-			SensorManager.getOrientation(Rot, orientation);
-			bearing = (180.0/Math.PI)*orientation[0];
-			while(bearing < 0.0)
-				bearing += 360.0;
-			updateTextView((TextView) findViewById(R.id.orientation), bearing);
-		}
-		
-		}
-		catch(Exception e)
-		{
-			notifier.toast_message(e.toString());
+		synchronized(this) {
+			try{
+
+				if (arg0.sensor.getType() == Sensor.TYPE_ORIENTATION) 
+                    System.arraycopy(arg0.values,0,orientation,0,3);
+                
+				if(counter < 8)
+				{
+					counter++;
+					return;
+				}
+				counter = 0;
+				updateTextView((TextView) findViewById(R.id.orientation), orientation[0]);
+
+			}
+			catch(Exception e)
+			{
+				notifier.toast_message(e.toString());
+			}
 		}
 	}
 }
