@@ -250,7 +250,7 @@ public class RealGPSMain extends Activity implements OnItemSelectedListener {
 			break;
 		}
 		
-		notifier.toast_message("Changed Units to " + unit_types[arg2]);
+		notifier.toast_message("Set Units to " + unit_types[arg2]);
 	}
 
 	@Override
